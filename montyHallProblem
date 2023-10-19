@@ -1,0 +1,106 @@
+import random
+
+fm = input('Gameshow or experiment? (g, e) ').lower()
+print()
+if fm == 'g':
+    total = 1
+else:
+    fm = 'e'
+    etype = input('Should the experiment be: How often do you get goats or cars if ... \n1. you always change doors\n2. you always stick with your door\n3. you alternate between changing and sticking with your doors ')
+    alternate = 'odd'
+    while True:
+        total = input('How many times should the experiment run? (5000 - 500000 recommended) ')
+        try:
+            total = int(total)
+        except:
+            print('\nNot valid number\n')
+            continue
+        if total > 10000000:
+            print('\nNumber is too high\n')
+        else:
+            print()
+            break
+ 
+goat_counter = 0 #added
+car_counter = 0 #added
+
+for counter in range(0,total):
+    options = ['goat','goat','car']
+    doors = {}
+
+    for i in range (1,4):
+        option = random.choice(options)
+        options.remove(option)
+        doors[str(i)] = option
+    numbers = ['1','2','3']
+    if fm == 'e':
+        door_selected = random.choice(numbers) #added
+    else:
+        while True:
+            door_selected = input('Select a door (1, 2, or 3): ')
+            print()
+            if door_selected != '1' and door_selected != '2' and door_selected != '3':
+                print('Invalid')
+            else:
+                break
+            
+    if doors[door_selected] == 'goat':
+        numbers = ['1','2','3']
+        numbers.remove(door_selected)
+        open_door = random.choice(numbers)
+        if doors[open_door] == 'car':
+            numbers.remove(open_door)
+            open_door = numbers[0]
+    else:
+        numbers = ['1','2','3']
+        numbers.remove(door_selected)
+        open_door = random.choice(numbers)
+    if fm == 'g':
+        print(f'Door {open_door} has been opened. Behind it are goats.\n')
+    numbers = ['1','2','3']
+    numbers.remove(door_selected)
+    numbers.remove(open_door)
+    remaining_door = numbers[0]
+
+    if fm == 'e':
+        if etype == '1':
+            if doors[remaining_door] == 'goat':
+                goat_counter += 1
+            else:
+                car_counter += 1
+        elif etype == '2':
+            if doors[door_selected] == 'goat':
+                goat_counter += 1
+            else:
+                car_counter += 1
+        else:
+            if alternate == 'odd':
+                if doors[remaining_door] == 'goat':
+                    goat_counter += 1
+                else:
+                    car_counter += 1
+                alternate = 'even'
+            else:
+                if doors[door_selected] == 'goat':
+                    goat_counter += 1
+                    
+                else:
+                    car_counter += 1
+                alternate = 'odd'                
+            
+if fm == 'e':
+    print(f'Total: {total}\nGoat Count: {goat_counter} ({round(goat_counter/total*100,1)}%)\nCar Count: {car_counter} ({round(car_counter/total*100,1)}%)')
+else:
+
+    while True:
+        change = input(f'Would you like to change doors to door {remaining_door} instead? (y/n) ').lower()
+        if change != 'y' and change != 'n':
+            print('Invalid')
+        else:
+            break
+    if change == 'y':
+        door_selected = remaining_door
+    if doors[door_selected] == 'goat':
+        print('\nBehind the door you opened ... are goats.')
+    else:
+        print('\nBehind the door you opened ... is a brand new car!')
